@@ -1,25 +1,61 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+
+import Hello from '@/components/Hello'
+import Login from '@/components/Login'
+import SignUp from '@/components/SignUp'
+
+import firebase from 'firebase/app'
+import 'firebase/auth'
 
 Vue.use(Router)
 
-export default new Router({
-  mode: 'history',
-  base: process.env.BASE_URL,
+let router = new Router({
+  // mode: 'history',
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: Home
+      path: '*',
+      redirect: '/login'
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      path: '/',
+      redirect: '/login'
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/sign-up',
+      name: 'Sign-Up',
+      component: SignUp
+    },
+    {
+      path: '/hello',
+      name: 'Hello',
+      component: Hello,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  let currentUser = firebase.auth().currentUser
+  let requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+
+  //not login
+  if (requiresAuth && !currentUser) 
+    next('login')
+  //logined
+  else if (!requiresAuth && currentUser) 
+    next('hello')
+  //other cases
+  else 
+    next()
+
+})
+
+export default router

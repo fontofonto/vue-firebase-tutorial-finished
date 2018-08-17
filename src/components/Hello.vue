@@ -26,14 +26,26 @@
       <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
     </ul>
+    <button @click="logout">Logout</button>
   </div>
 </template>
 
 <script>
+import firebase from 'firebase/app'
+
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  name: 'hello',
+  data() {
+    return {
+      msg: 'Welcome to Your Vue.js App'
+    }
+  },
+  methods: {
+    logout() {
+      firebase.auth().signOut().then(() => {
+        this.$router.replace('login')
+      })
+    }
   }
 }
 </script>
@@ -53,5 +65,15 @@ li {
 }
 a {
   color: #42b983;
+}
+button{
+  padding: 10px 20px;
+  background: #42b983;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 22px;
+  outline: 0;
+  cursor: pointer;
 }
 </style>
